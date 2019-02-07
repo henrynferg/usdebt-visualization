@@ -1,5 +1,4 @@
 let angle = 0;
-let earthTexture;
 
 // diameters in km
 const sSun = 1.391016e6;
@@ -26,6 +25,22 @@ const dUranus = 2.87e9;
 const dNeptune = 4.497e9;
 
 const distances = [posSun, dMercury, dVenus, dEarth, dMars, dJupiter, dSaturn, dUranus, dNeptune];
+
+// Rotational velocity (km/s)
+const sunRV = 2.02;
+const mercuryRV = 0.0030253;
+const venusRV = 0.001811;
+const earthRV = 0.4651;
+const marsRV = 0.24073;
+const jupiterRV = 12.572;
+const saturnRV = 9.871;
+const uranusRV = 2.5875;
+const neptuneRV = 2.6829;
+
+const rvScale = 2.15008e-4; // Earth = 0.0001
+
+const rotationalVelocities = [sunRV, mercuryRV, venusRV, earthRV, marsRV, jupiterRV, saturnRV,
+	uranusRV, neptuneRV];
 
 // Textures
 const sunTexturePath = 'sun.jpg';
@@ -62,30 +77,34 @@ var currentX = 0;
 var clicking = false;
 
 class Planet {
-	constructor(orbitsAround, distance, diameter, texture) {
+	constructor(orbitsAround, distance, diameter, texture, rv) {
 		this.orbitsAround = orbitsAround;
 		this.distance = distance;
 		this.diameter = diameter;
 		this.texture = texture;
+		this.rv = rv;
+		this.rotation = 0;
 	}
 }
 
 class Sun {
-	constructor(diameter, texture) {
+	constructor(diameter, texture, rv) {
 		this.diameter = diameter;
 		this.texture = texture;
 		this.distance = 20;
+		this.rv = rv;
+		this.rotation = 0;
 	}
 }
 
 var setup = function() {
 	createCanvas(window.screen.width, 720, WEBGL);
-	sun = new Sun(diameters[0] * 0.1, loadImage(texturePaths[0])); // Sun's too large, need to scale down ~.1
+	sun = new Sun(diameters[0] * 0.1, loadImage(texturePaths[0]), rotationalVelocities[0]);
+	// Sun's too large, need to scale size down ~.1
 	planets.push(sun);
 	for(var i=1; i<diameters.length; i++) {
 		var texture = loadImage(texturePaths[i]);
-		console.log(texture);
-		planet = new Planet(sun, distances[i], diameters[i], texture);
+		planet = new Planet(sun, distances[i], diameters[i], texture, rotationalVelocities[i]);
 		planets.push(planet);
 	}
 }
@@ -106,9 +125,6 @@ var mouseWheel = function(event) {
 	sScale *= 1 - delta * 0.1;
 	dScale *= 1 - delta * 0.1;
 	cameraX *= 1 - delta * 0.1;
-	//sScale = sScale - event.delta * originalSScale / 800;
-	//dScale = dScale - event.delta * originalDScale / 800;
-	//cameraX += event.x * (dScale / originalDScale);
 }
 
 var draw = function() {
@@ -122,11 +138,12 @@ var draw = function() {
 		noStroke();
 		fill(0, 0, 255);
 		translate(dScale * (planet.distance-800) - cameraX, 0, 0);
-		rotateY(angle);
+		rotateY(planet.rotation);
 		rotateY(90);
+		planet.rotation += planet.rv * rvScale;
 		texture(planet.texture);
 		sphere(planet.diameter * sScale);
-		angle += 0.0001;
+		//angle += 0.0001;
 		pop();
 	}
 }
