@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+var caller = require('./apiCaller');
 const app = new express();
 const port = 4040;
 
@@ -9,5 +10,13 @@ app.get('/', function(request, response){
     const root = ".\\";
     response.sendFile('.\\index.html', {root: root});
 });
+
+app.get('/height', function(request, response) {
+    caller.fetchData().then(function(result) {
+        console.log(result);
+        response.send("<p>" + result + "</p>");
+    });
+});
+
 app.listen(port);
 console.log("Listening at port " + port);

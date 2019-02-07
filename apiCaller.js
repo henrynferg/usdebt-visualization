@@ -6,16 +6,27 @@ var queryOptions = {sort: '-data_date'};
 const pennyThickness = 1.52e-6; // In km
 var debt = 0; // In USD
 
-var caller = {};
+var caller = {
+    fetchData: function() {
+        return new Promise(function(resolve, reject) {
+                request({
+                url: govtHost + govtPath,
+                qs: queryOptions
+            }, function(err, response, body) {
+                resolve(handleDebtData(err, response, body));
+            });
+        });
+    }
+};
 
-var fetchData = function() {
+/*var fetchData = function() {
     request({
         url: govtHost + govtPath,
         qs: queryOptions
     }, function(err, response, body) {
         caller.height = handleDebtData(err, response, body);
     });
-}
+}*/
 
 var handleDebtData = function(err, response, body) {
     if(err) {
@@ -40,4 +51,4 @@ var calculateNationalDebtHeight = function(numDollars) {
     return pennyThickness * calculateNumPennies(numDollars);
 }
 
-module.exports(caller);
+module.exports = caller;

@@ -11,6 +11,12 @@ const sSaturn = 1.2e5;
 const sUranus = 5.2e4;
 const sNeptune = 4.84e4;
 
+// diameter scale: Earth = 10
+const sunScale = 1.276e-4;
+
+var sScale = 1.276e-3;
+const originalSScale = 1.276e-3;
+
 const diameters = [sSun, sMercury, sVenus, sEarth, sMars, sJupiter, sSaturn, sUranus, sNeptune];
 
 // distance from Sun in km
@@ -23,6 +29,10 @@ const dJupiter = 7.785e8;
 const dSaturn = 1.427e9;
 const dUranus = 2.87e9;
 const dNeptune = 4.497e9;
+
+// distance scale: Sun->Earth = 100
+var dScale = 1.472e-5;
+const originalDScale = 1.472e-5;
 
 const distances = [posSun, dMercury, dVenus, dEarth, dMars, dJupiter, dSaturn, dUranus, dNeptune];
 
@@ -55,16 +65,6 @@ const neptuneTexturePath = 'neptune.jpg';
 
 const texturePaths = [sunTexturePath, mercuryTexturePath, venusTexturePath, earthTexturePath, marsTexturePath, 
 	jupiterTexturePath, saturnTexturePath, uranusTexturePath, neptuneTexturePath];
-
-// diameter scale: Earth = 10
-const sunScale = 1.276e-4;
-
-var sScale = 1.276e-3;
-const originalSScale = 1.276e-3;
-
-// distance scale: Sun->Earth = 100
-var dScale = 1.472e-5;
-const originalDScale = 1.472e-5;
 
 var planets = [];
 
@@ -139,8 +139,8 @@ var draw = function() {
 		fill(0, 0, 255);
 		translate(dScale * (planet.distance-800) - cameraX, 0, 0);
 		rotateY(planet.rotation);
-		rotateY(90);
 		planet.rotation += planet.rv * rvScale;
+		planet.rotation %= 360;
 		texture(planet.texture);
 		sphere(planet.diameter * sScale);
 		//angle += 0.0001;
