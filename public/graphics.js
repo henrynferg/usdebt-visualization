@@ -1,6 +1,8 @@
 let angle = 0;
 
 const pennyThickness = 1.52e-6; // In km
+var debtDollars = 0;
+var called = false;
 
 // diameters in km
 const sSun = 1.391016e6;
@@ -99,19 +101,6 @@ class Sun {
 	}
 }
 
-var setup = function() {
-	var goButton = document.getElementById("go");
-	goButton.onclick = pennyRequest;
-	createCanvas(window.screen.width, 720, WEBGL);
-	sun = new Sun(0.1 * diameters[0], loadImage(texturePaths[0]), rotationalVelocities[0]);
-	planets.push(sun);
-	for(var i=1; i<diameters.length; i++) {
-		var texture = loadImage(texturePaths[i]);
-		planet = new Planet(sun, distances[i], diameters[i], texture, rotationalVelocities[i]);
-		planets.push(planet);
-	}
-}
-
 var mousePressed = function(event) {
 	clicking = true;
 	lastX = event.x;
@@ -131,12 +120,19 @@ var mouseWheel = function(event) {
 }
 
 var pennyRequest = function() {
-	return fetch("/height").then(function(res) {
-		res.json().then(function(data) {
-			pennyHeight = calculateDebtHeightPennies(data.debt);
-			drawPennies = true;
+	if(!called) {
+		return fetch("/height").then(function(res) {
+			res.json().then(function(data) {
+				debtDollars = data.debt;
+				pennyHeight = calculateDebtHeightPennies(data.debt);
+				drawPennies = true;
+				called = true;
+			});
 		});
-	});
+	}
+	else {
+		return debtDollars;
+	}
 }
 
 var calculateDebtHeightPennies = function(numDollars) {
@@ -145,6 +141,19 @@ var calculateDebtHeightPennies = function(numDollars) {
 
 var calculateNumPennies = function(numDollars) {
 	return numDollars * 100;
+}
+
+var setup = function() {
+	var goButton = document.getElementById("go");
+	goButton.onclick = pennyRequest;
+	createCanvas(window.screen.width, 720, WEBGL);
+	sun = new Sun(0.1 * diameters[0], loadImage(texturePaths[0]), rotationalVelocities[0]);
+	planets.push(sun);
+	for(var i=1; i<diameters.length; i++) {
+		var texture = loadImage(texturePaths[i]);
+		planet = new Planet(sun, distances[i], diameters[i], texture, rotationalVelocities[i]);
+		planets.push(planet);
+	}
 }
 
 var draw = function() {
