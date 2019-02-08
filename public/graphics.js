@@ -1,5 +1,7 @@
 let angle = 0;
 
+const pennyThickness = 1.52e-6; // In km
+
 // diameters in km
 const sSun = 1.391016e6;
 const sMercury = 4.88e3;
@@ -10,10 +12,10 @@ const sJupiter = 1.43e5;
 const sSaturn = 1.2e5;
 const sUranus = 5.2e4;
 const sNeptune = 4.84e4;
+var pennyHeight = 0;
+var drawPennies = false;
 
-// diameter scale: Earth = 10
-const sunScale = 1.276e-4;
-
+// initial diameter scale: Earth = 10
 var sScale = 1.276e-3;
 const originalSScale = 1.276e-3;
 
@@ -98,9 +100,10 @@ class Sun {
 }
 
 var setup = function() {
+	var goButton = document.getElementById("go");
+	goButton.onclick = pennyRequest;
 	createCanvas(window.screen.width, 720, WEBGL);
-	sun = new Sun(diameters[0] * 0.1, loadImage(texturePaths[0]), rotationalVelocities[0]);
-	// Sun's too large, need to scale size down ~.1
+	sun = new Sun(0.1 * diameters[0], loadImage(texturePaths[0]), rotationalVelocities[0]);
 	planets.push(sun);
 	for(var i=1; i<diameters.length; i++) {
 		var texture = loadImage(texturePaths[i]);
@@ -127,6 +130,23 @@ var mouseWheel = function(event) {
 	cameraX *= 1 - delta * 0.1;
 }
 
+var pennyRequest = function() {
+	return fetch("/height").then(function(res) {
+		res.json().then(function(data) {
+			pennyHeight = calculateDebtHeightPennies(data.debt);
+			drawPennies = true;
+		});
+	});
+}
+
+var calculateDebtHeightPennies = function(numDollars) {
+    return pennyThickness * calculateNumPennies(numDollars);
+}
+
+var calculateNumPennies = function(numDollars) {
+	return numDollars * 100;
+}
+
 var draw = function() {
 	if(mouseIsPressed) {
 		cameraX -= currentX;
@@ -143,7 +163,15 @@ var draw = function() {
 		planet.rotation %= 360;
 		texture(planet.texture);
 		sphere(planet.diameter * sScale);
-		//angle += 0.0001;
+		pop();
+	}
+
+	if(drawPennies) {
+		push();
+		fill(184, 115, 51);
+		noStroke();
+		translate(dScale * pennyHeight / 2 - cameraX, 0, 0);
+		box(dScale * pennyHeight, 5, 5);
 		pop();
 	}
 }

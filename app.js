@@ -12,10 +12,11 @@ app.get('/', function(request, response){
 });
 
 app.get('/height', function(request, response) {
-    caller.fetchData().then(function(result) {
-        console.log(result);
-        response.send("<p>" + result + "</p>");
-    });
+    if(!caller.called) {
+        caller.fetchData().then(function(result) {
+            response.send({debt: result});
+        });
+    }
 });
 
 app.listen(port);
