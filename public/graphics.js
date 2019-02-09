@@ -1,6 +1,9 @@
 let angle = 0;
 
 const pennyThickness = 1.52e-6; // In km
+const nickelThickness = 2e-6;
+const dimeThickness = 1e-6;
+const quarterThickness = 1.75e-6;
 var debtDollars = 0;
 var called = false;
 
@@ -14,8 +17,9 @@ const sJupiter = 1.43e5;
 const sSaturn = 1.2e5;
 const sUranus = 5.2e4;
 const sNeptune = 4.84e4;
-var pennyHeight = 0;
-var drawPennies = false;
+var lineLength = 0;
+var dollarHeight = 0;
+var lineColor = [0, 0, 0];
 
 // initial diameter scale: Earth = 10
 var sScale = 1.276e-3;
@@ -80,6 +84,17 @@ var currentX = 0;
 
 var clicking = false;
 
+class Coin {
+	constructor(value, color, thickness) {
+		this.value = value;
+		this.color = color;
+		this.thickness = thickness;
+	}
+	getDebtHeight() {
+		return this.thickness * (1 / this.value) * debtDollars;
+	}
+}
+
 class Planet {
 	constructor(orbitsAround, distance, diameter, texture, rv) {
 		this.orbitsAround = orbitsAround;
@@ -119,33 +134,73 @@ var mouseWheel = function(event) {
 	cameraX *= 1 - delta * 0.1;
 }
 
-var pennyRequest = function() {
+var getDebt = function() {
+	return fetch("/height").then(function(res) {
+		res.json().then(function(data) {
+			debtDollars = data.debt;
+			called = true;
+			return data.debt;
+		});
+	});
+}
+
+var coinDebtHeight = function(coin) {
+	lineColor = coin.color;
 	if(!called) {
-		return fetch("/height").then(function(res) {
-			res.json().then(function(data) {
-				debtDollars = data.debt;
-				pennyHeight = calculateDebtHeightPennies(data.debt);
-				drawPennies = true;
-				called = true;
-			});
+		getDebt().then(function(res) {
+			lineLength = coin.getDebtHeight();
 		});
 	}
 	else {
-		return debtDollars;
+		lineLength = coin.getDebtHeight();
+	}
+	return lineLength;
+}
+
+var clearSelection = function() {
+	lineColor = [0, 0, 0];
+	lineLength = 0;
+	return 0;
+}
+
+var goButtonFn = function() {
+	var e = document.getElementById("selection");
+	var opt = e.options[e.selectedIndex].value;
+	if(opt === "pennies") {
+		var penny = new Coin(0.01, [184, 115, 51], pennyThickness);
+		coinDebtHeight(penny);
+	}
+	else if(opt === "nickels") {
+		var nickel = new Coin(0.05, [70, 70, 70], nickelThickness);
+		coinDebtHeight(nickel);
+	}
+	else if(opt === "dimes") {
+		var dime = new Coin(0.1, [70, 70, 70], dimeThickness);
+		coinDebtHeight(dime);
+	}
+	else if(opt === "quarters") {
+		var quarter = new Coin(0.25, [70, 70, 70], quarterThickness);
+		coinDebtHeight(quarter);
+	}
+	else {
+		clearSelection();
 	}
 }
 
-var calculateDebtHeightPennies = function(numDollars) {
-    return pennyThickness * calculateNumPennies(numDollars);
+var calculateNumQuarters = function(numDollars) {
+	return numDollars * 4;
 }
 
 var calculateNumPennies = function(numDollars) {
 	return numDollars * 100;
 }
 
-var setup = function() {
+window.onload = function() {
 	var goButton = document.getElementById("go");
-	goButton.onclick = pennyRequest;
+	goButton.onclick = goButtonFn;
+}
+
+var setup = function() {
 	createCanvas(window.screen.width, 720, WEBGL);
 	sun = new Sun(0.1 * diameters[0], loadImage(texturePaths[0]), rotationalVelocities[0]);
 	planets.push(sun);
@@ -160,7 +215,7 @@ var draw = function() {
 	if(mouseIsPressed) {
 		cameraX -= currentX;
 	}
-	background(220);
+	background(0);
 	rectMode(CENTER);
 	for(var planet of planets) {
 		push();
@@ -175,12 +230,10 @@ var draw = function() {
 		pop();
 	}
 
-	if(drawPennies) {
-		push();
-		fill(184, 115, 51);
-		noStroke();
-		translate(dScale * pennyHeight / 2 - cameraX, 0, 0);
-		box(dScale * pennyHeight, 5, 5);
-		pop();
-	}
+	push();
+	fill(lineColor[0], lineColor[1], lineColor[2]);
+	noStroke();
+	translate(dScale * lineLength / 2 - cameraX, 0, 0);
+	box(dScale * lineLength, 5, 5);
+	pop();
 }

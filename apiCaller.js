@@ -10,7 +10,9 @@ var caller = {
                 url: govtHost + govtPath,
                 qs: queryOptions
             }, function(err, response, body) {
-                console.log("CALLED");
+                var date = new Date();
+                console.log("CALLED: " + date.getHours() + ":" + date.getMinutes() + " " + 
+                            (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear());
                 resolve(handleDebtData(err, response, body));
             });
         });
