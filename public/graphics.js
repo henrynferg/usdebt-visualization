@@ -151,7 +151,7 @@ var mouseWheel = function(event) {
 
 var getDebt = function() {
 	return new Promise(function(resolve, reject) { 
-		fetch("/height").then(function(res) {
+		fetch("/debt").then(function(res) {
 			res.json().then(function(data) {
 				resolve(data.debt);
 			});

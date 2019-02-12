@@ -8,7 +8,7 @@ const port = 4040;
 
 var updateDebtData = function() {
     caller.fetchData().then(function(result) {
-        app.get('/height', function(req, res) {
+        app.get('/debt', function(req, res) {
             res.send({debt: result});
         });
     });
