@@ -234,7 +234,7 @@ var draw = function() {
 		planet.rotation += planet.rv * rvScale;
 		planet.rotation %= 360;
 		texture(planet.texture);
-		sphere(planet.diameter * sScale);
+		sphere(planet.diameter * sScale, 32, 24);
 		pop();
 	}
 
