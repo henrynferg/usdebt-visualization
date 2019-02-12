@@ -57,6 +57,19 @@ const rvScale = 2.15008e-4; // Earth = 0.0001
 const rotationalVelocities = [sunRV, mercuryRV, venusRV, earthRV, marsRV, jupiterRV, saturnRV,
 	uranusRV, neptuneRV];
 
+// Axial tilts (degrees)
+const sunAT = 7.25;
+const mercuryAT = 0.01;
+const venusAT = 177.36;
+const earthAT = 23.45;
+const marsAT = 25.19;
+const jupiterAT = 3.13;
+const saturnAT = 26.73;
+const uranusAT = 97.77;
+const neptuneAT = 28.32;
+
+const axialTilts = [sunAT, mercuryAT, venusAT, earthAT, marsAT, jupiterAT, saturnAT, uranusAT, neptuneAT];
+
 // Textures
 const sunTexturePath = 'sun.jpg';
 const mercuryTexturePath = 'mercury.jpg';
@@ -93,22 +106,24 @@ class Coin {
 }
 
 class Planet {
-	constructor(orbitsAround, distance, diameter, texture, rv) {
+	constructor(orbitsAround, distance, diameter, texture, rotationalVel, axialTilt) {
 		this.orbitsAround = orbitsAround;
 		this.distance = distance;
 		this.diameter = diameter;
 		this.texture = texture;
-		this.rv = rv;
+		this.rv = rotationalVel;
+		this.at = axialTilt;
 		this.rotation = 0;
 	}
 }
 
 class Sun {
-	constructor(diameter, texture, rv) {
+	constructor(diameter, texture, rv, at) {
 		this.diameter = diameter;
 		this.texture = texture;
 		this.distance = 20;
 		this.rv = rv;
+		this.at = at;
 		this.rotation = 0;
 	}
 }
@@ -196,11 +211,11 @@ window.onload = function() {
 
 var setup = function() {
 	createCanvas(window.screen.width, 720, WEBGL);
-	sun = new Sun(0.1 * diameters[0], loadImage(texturePaths[0]), rotationalVelocities[0]);
+	sun = new Sun(0.1 * diameters[0], loadImage(texturePaths[0]), rotationalVelocities[0], axialTilts[0]);
 	planets.push(sun);
 	for(var i=1; i<diameters.length; i++) {
 		var texture = loadImage(texturePaths[i]);
-		planet = new Planet(sun, distances[i], diameters[i], texture, rotationalVelocities[i]);
+		planet = new Planet(sun, distances[i], diameters[i], texture, rotationalVelocities[i], axialTilts[i]);
 		planets.push(planet);
 	}
 }
@@ -216,6 +231,7 @@ var draw = function() {
 		noStroke();
 		fill(0, 0, 255);
 		translate(dScale * (planet.distance-800) - cameraX, 0, 0);
+		rotateZ(radians(planet.at));
 		rotateY(planet.rotation);
 		planet.rotation += planet.rv * rvScale;
 		planet.rotation %= 360;
