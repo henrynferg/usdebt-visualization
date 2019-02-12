@@ -4,7 +4,6 @@ const pennyThickness = 1.52e-6; // In km
 const nickelThickness = 2e-6;
 const dimeThickness = 1e-6;
 const quarterThickness = 1.75e-6;
-var called = false;
 
 // diameters in km
 const sSun = 1.391016e6;
@@ -17,7 +16,6 @@ const sSaturn = 1.2e5;
 const sUranus = 5.2e4;
 const sNeptune = 4.84e4;
 var lineLength = 0;
-var dollarHeight = 0;
 var lineColor = [0, 0, 0];
 
 // initial diameter scale: Earth = 10
