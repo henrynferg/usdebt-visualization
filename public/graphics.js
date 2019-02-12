@@ -1,5 +1,3 @@
-let angle = 0;
-
 const pennyThickness = 1.52e-6; // In km
 const nickelThickness = 2e-6;
 const dimeThickness = 1e-6;
@@ -128,6 +126,11 @@ class Sun {
 	}
 }
 
+window.onload = function() {
+	var goButton = document.getElementById("go");
+	goButton.onclick = goButtonFn;
+}
+
 var mousePressed = function(event) {
 	clicking = true;
 	lastX = event.x;
@@ -202,11 +205,6 @@ var calculateNumQuarters = function(numDollars) {
 
 var calculateNumPennies = function(numDollars) {
 	return numDollars * 100;
-}
-
-window.onload = function() {
-	var goButton = document.getElementById("go");
-	goButton.onclick = goButtonFn;
 }
 
 var setup = function() {
