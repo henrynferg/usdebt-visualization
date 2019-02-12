@@ -4,7 +4,6 @@ const pennyThickness = 1.52e-6; // In km
 const nickelThickness = 2e-6;
 const dimeThickness = 1e-6;
 const quarterThickness = 1.75e-6;
-var debtDollars = 0;
 var called = false;
 
 // diameters in km
@@ -90,7 +89,7 @@ class Coin {
 		this.color = color;
 		this.thickness = thickness;
 	}
-	getDebtHeight() {
+	getDebtHeight(debtDollars) {
 		return this.thickness * (1 / this.value) * debtDollars;
 	}
 }
@@ -135,56 +134,53 @@ var mouseWheel = function(event) {
 }
 
 var getDebt = function() {
-	return fetch("/height").then(function(res) {
-		res.json().then(function(data) {
-			debtDollars = data.debt;
-			called = true;
-			return data.debt;
+	return new Promise(function(resolve, reject) { 
+		fetch("/height").then(function(res) {
+			res.json().then(function(data) {
+				resolve(data.debt);
+			});
 		});
 	});
 }
 
 var coinDebtHeight = function(coin) {
-	lineColor = coin.color;
-	if(!called) {
+	return new Promise(function(resolve, reject) {
 		getDebt().then(function(res) {
-			lineLength = coin.getDebtHeight();
+			resolve(coin.getDebtHeight(res));
 		});
-	}
-	else {
-		lineLength = coin.getDebtHeight();
-	}
-	return lineLength;
-}
-
-var clearSelection = function() {
-	lineColor = [0, 0, 0];
-	lineLength = 0;
-	return 0;
+	});
 }
 
 var goButtonFn = function() {
 	var e = document.getElementById("selection");
 	var opt = e.options[e.selectedIndex].value;
+	var coin;
 	if(opt === "pennies") {
-		var penny = new Coin(0.01, [184, 115, 51], pennyThickness);
-		coinDebtHeight(penny);
+		coin = new Coin(0.01, [184, 115, 51], pennyThickness);
 	}
 	else if(opt === "nickels") {
-		var nickel = new Coin(0.05, [70, 70, 70], nickelThickness);
-		coinDebtHeight(nickel);
+		coin = new Coin(0.05, [70, 70, 70], nickelThickness);
 	}
 	else if(opt === "dimes") {
-		var dime = new Coin(0.1, [70, 70, 70], dimeThickness);
-		coinDebtHeight(dime);
+		coin = new Coin(0.1, [70, 70, 70], dimeThickness);
 	}
 	else if(opt === "quarters") {
-		var quarter = new Coin(0.25, [70, 70, 70], quarterThickness);
-		coinDebtHeight(quarter);
+		coin = new Coin(0.25, [70, 70, 70], quarterThickness);
 	}
 	else {
-		clearSelection();
+		coin = new Coin(0, [0, 0, 0], 0);
 	}
+
+	if(coin.value != 0) {
+		coinDebtHeight(coin).then(function(res) {
+			lineLength = res;
+		});
+	}
+	else {
+		lineLength = 0;
+	}
+
+	lineColor = coin.color;
 }
 
 var calculateNumQuarters = function(numDollars) {

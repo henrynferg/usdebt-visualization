@@ -11,9 +11,9 @@ app.get('/', function(request, response){
     response.sendFile('.\\index.html', {root: root});
 });
 
-app.get('/height', function(request, response) {
-    caller.fetchData().then(function(result) {
-        response.send({debt: result});
+caller.fetchData().then(function(result) {
+    app.get('/height', function(req, res) {
+        res.send({debt: result});
     });
 });
 
