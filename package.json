@@ -1,0 +1,29 @@
+{
+  "name": "usdebt",
+  "version": "1.0.0",
+  "description": "Visualize the United States debt on a Solar-System scale",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henrynferg/usdebt-visualization.git"
+  },
+  "keywords": [
+    "visualization"
+  ],
+  "author": "Henry Ferguson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/henrynferg/usdebt-visualization/issues"
+  },
+  "homepage": "https://github.com/henrynferg/usdebt-visualization#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "moment": "^2.24.0",
+    "node-schedule": "^1.3.1",
+    "path": "^0.12.7",
+    "request": "^2.88.0"
+  }
+}
