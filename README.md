@@ -2,7 +2,7 @@ If you stacked all the pennies it would take to pay off the national debt of the
 
 Planet textures courtesy of NASA (except Uranus).
 
-Mercury: https://solarsystem.nasa.gov/resources/531/enhanced-color-mercury-map/
-Venus, Mars, Jupiter, Saturn, Neptune: https://maps.jpl.nasa.gov/
-Earth: https://visibleearth.nasa.gov/view_cat.php?categoryID=1484
+Mercury: https://solarsystem.nasa.gov/resources/531/enhanced-color-mercury-map/  
+Venus, Mars, Jupiter, Saturn, Neptune: https://maps.jpl.nasa.gov/  
+Earth: https://visibleearth.nasa.gov/view_cat.php?categoryID=1484  
 Uranus: http://planetaryexplorers.appspot.com/textures/uranus.jpg
