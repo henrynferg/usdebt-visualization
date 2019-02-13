@@ -155,6 +155,8 @@ var getDebt = function() {
 			res.json().then(function(data) {
 				resolve(data.debt);
 			});
+		}).catch(function(err) {
+			console.log(err);
 		});
 	});
 }
