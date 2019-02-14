@@ -20,6 +20,9 @@ var lineColor = [0, 0, 0];
 var sScale = 1.276e-3;
 const originalSScale = 1.276e-3;
 
+const minScale = 1.417e-4;
+const maxScale = 1.276e-2;
+
 const diameters = [sSun, sMercury, sVenus, sEarth, sMars, sJupiter, sSaturn, sUranus, sNeptune];
 
 // distance from Sun in km
@@ -85,6 +88,8 @@ const texturePaths = [sunTexturePath, mercuryTexturePath, venusTexturePath, eart
 var planets = [];
 
 var cameraX = 0;
+const minCameraX = -80;
+const maxCameraX = 70000;
 
 var lastX = 0;
 
@@ -143,10 +148,36 @@ var mouseDragged = function(event) {
 }
 
 var mouseWheel = function(event) {
+	lastSScale = sScale;
+	lastDScale = dScale;
+	lastCameraX = cameraX;
+
 	const delta = event.delta > 0 ? 1 : -1;
 	sScale *= 1 - delta * 0.1;
 	dScale *= 1 - delta * 0.1;
 	cameraX *= 1 - delta * 0.1;
+
+	if(sScale < minScale || sScale > maxScale) {
+		sScale = lastSScale;
+		dScale = lastDScale;
+		cameraX = lastCameraX;
+	}
+	console.log(`Sscale: ${sScale} Dscale: ${dScale} cameraX: ${cameraX}`);
+}
+
+var moveCamera = function() {
+	// Don't scroll left if cameraX < minCameraX, right if cameraX > maxCameraX
+	if(mouseIsPressed) {
+		var zoomFactor = sScale / originalSScale;
+		var lastCameraX = cameraX;
+		cameraX -= currentX;
+		if(cameraX > maxCameraX * zoomFactor && currentX < 0) {
+			cameraX = lastCameraX;
+		}
+		if(cameraX < minCameraX * zoomFactor && currentX > 0) {
+			cameraX = lastCameraX;
+		}
+	}
 }
 
 var getDebt = function() {
@@ -221,9 +252,7 @@ var setup = function() {
 }
 
 var draw = function() {
-	if(mouseIsPressed) {
-		cameraX -= currentX;
-	}
+	moveCamera();
 	background(0);
 	rectMode(CENTER);
 	for(var planet of planets) {
