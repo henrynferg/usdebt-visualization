@@ -6,3 +6,8 @@ Mercury: https://solarsystem.nasa.gov/resources/531/enhanced-color-mercury-map/
 Venus, Mars, Jupiter, Saturn, Neptune: https://maps.jpl.nasa.gov/  
 Earth: https://visibleearth.nasa.gov/view_cat.php?categoryID=1484  
 Uranus: http://planetaryexplorers.appspot.com/textures/uranus.jpg
+
+
+Instructions for use:  
+1. Run app.js in Node  
+2. Navigate to http://localhost:4040
