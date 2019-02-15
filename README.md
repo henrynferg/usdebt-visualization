@@ -11,5 +11,7 @@ Uranus: http://planetaryexplorers.appspot.com/textures/uranus.jpg
 
 
 Instructions for use:  
-1. Run app.js in Node  
-2. Navigate to http://localhost:4040
+1. Git clone / download the repository  
+2. Unzip the cloned folder, cd into it, and run npm install  
+3. Run app.js in Node  
+4. Navigate to http://localhost:4040
